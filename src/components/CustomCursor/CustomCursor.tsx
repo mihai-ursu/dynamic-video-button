@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 
 const CustomCursor: FunctionComponent<CustomCursorProps> = ({ children }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [wrapperRightAndBottom, setWrapperRightAndBottom] = useState({
+  const [elementCenter, setElementCenter] = useState({
     x: 0,
     y: 0,
   });
@@ -25,22 +25,28 @@ const CustomCursor: FunctionComponent<CustomCursorProps> = ({ children }) => {
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
 
-  const getWrapperRightAndBottom = (wrapperRef: RefObject<HTMLDivElement>) => {
-    if (!wrapperRef) return { right: 0, bottom: 0 };
-    const right = wrapperRef?.current?.getBoundingClientRect().right || 0;
-    const bottom = wrapperRef?.current?.getBoundingClientRect().bottom || 0;
+  const getElementCenter = (wrapperRef: RefObject<HTMLDivElement>) => {
+    if (!wrapperRef) return { x: 0, y: 0 };
+    const left = wrapperRef?.current?.getBoundingClientRect().left || 0;
+    const top = wrapperRef?.current?.getBoundingClientRect().top || 0;
 
-    return { right, bottom };
+    const width = wrapperRef?.current?.getBoundingClientRect().width || 0;
+    const height = wrapperRef?.current?.getBoundingClientRect().height || 0;
+
+    const x = left + width / 2;
+    const y = top + height / 2;
+
+    return { x, y };
   };
 
   useEffect(() => {
-    cursorX.set(wrapperRightAndBottom.x / 2 - 30);
-    cursorY.set(wrapperRightAndBottom.y / 2 - 30);
-  }, [cursorX, cursorY, wrapperRightAndBottom.x, wrapperRightAndBottom.y]);
+    cursorX.set(elementCenter.x - 30);
+    cursorY.set(elementCenter.y - 30);
+  }, [cursorX, cursorY, elementCenter.x, elementCenter.y]);
 
   useEffect(() => {
-    const { right, bottom } = getWrapperRightAndBottom(wrapperRef);
-    setWrapperRightAndBottom({ x: right, y: bottom });
+    const { x, y } = getElementCenter(wrapperRef);
+    setElementCenter({ x: x, y: y });
   }, []);
 
   useEffect(() => {
@@ -55,8 +61,8 @@ const CustomCursor: FunctionComponent<CustomCursorProps> = ({ children }) => {
       cursorX.set(e.clientX - 30);
       cursorY.set(e.clientY - 30);
     } else {
-      cursorX.set(wrapperRightAndBottom.x / 2 - 30);
-      cursorY.set(wrapperRightAndBottom.y / 2 - 30);
+      cursorX.set(elementCenter.x - 30);
+      cursorY.set(elementCenter.y - 30);
     }
   };
 
