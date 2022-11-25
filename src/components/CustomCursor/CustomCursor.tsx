@@ -11,6 +11,7 @@ import { useMotionValue, useSpring } from "framer-motion";
 import { motion } from "framer-motion";
 
 const CustomCursor: FunctionComponent<CustomCursorProps> = ({ children }) => {
+  const PLAY_BUTTON_SIZE = 60;
   const [isHovered, setIsHovered] = useState(false);
   const [elementCenter, setElementCenter] = useState({
     x: 0,
@@ -40,8 +41,8 @@ const CustomCursor: FunctionComponent<CustomCursorProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    cursorX.set(elementCenter.x - 30);
-    cursorY.set(elementCenter.y - 30);
+    cursorX.set(elementCenter.x - PLAY_BUTTON_SIZE / 2);
+    cursorY.set(elementCenter.y - PLAY_BUTTON_SIZE / 2);
   }, [cursorX, cursorY, elementCenter.x, elementCenter.y]);
 
   useEffect(() => {
@@ -58,11 +59,11 @@ const CustomCursor: FunctionComponent<CustomCursorProps> = ({ children }) => {
 
   const onMouseMove = (e: MouseEvent) => {
     if (isHovered) {
-      cursorX.set(e.clientX - 30);
-      cursorY.set(e.clientY - 30);
+      cursorX.set(e.clientX - PLAY_BUTTON_SIZE / 2);
+      cursorY.set(e.clientY - PLAY_BUTTON_SIZE / 2);
     } else {
-      cursorX.set(elementCenter.x - 30);
-      cursorY.set(elementCenter.y - 30);
+      cursorX.set(elementCenter.x - PLAY_BUTTON_SIZE / 2);
+      cursorY.set(elementCenter.y - PLAY_BUTTON_SIZE / 2);
     }
   };
 
