@@ -84,7 +84,7 @@ const DynamicVideoButton: FunctionComponent<DynamicVideoButtonProps> = ({
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ duration: 0.2, delay: 0.4 }}
-        className={styles.DynamicVideoButton}
+        className={styles.customButton}
       />
       {children}
     </div>
