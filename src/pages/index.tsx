@@ -1,12 +1,12 @@
-import CustomCursor from "components/CustomCursor/CustomCursor";
+import DynamicVideoButton from "components/DynamicVideoButton/DynamicVideoButton";
 import styles from "../styles/Home.module.scss";
 
 export default function Home() {
   return (
     <div className={styles.container}>
-      <CustomCursor>
+      <DynamicVideoButton>
         <div className={styles.video}></div>
-      </CustomCursor>
+      </DynamicVideoButton>
     </div>
   );
 }

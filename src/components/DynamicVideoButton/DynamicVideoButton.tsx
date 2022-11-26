@@ -5,12 +5,14 @@ import {
   useRef,
   useState,
 } from "react";
-import CustomCursorProps from "./CustomCursorProps";
-import styles from "./CustomCursor.module.scss";
+import DynamicVideoButtonProps from "./DynamicVideoButtonProps";
+import styles from "./DynamicVideoButton.module.scss";
 import { useMotionValue, useSpring } from "framer-motion";
 import { motion } from "framer-motion";
 
-const CustomCursor: FunctionComponent<CustomCursorProps> = ({ children }) => {
+const DynamicVideoButton: FunctionComponent<DynamicVideoButtonProps> = ({
+  children,
+}) => {
   const PLAY_BUTTON_SIZE = 60;
   const [isHovered, setIsHovered] = useState(false);
   const [elementCenter, setElementCenter] = useState({
@@ -19,8 +21,8 @@ const CustomCursor: FunctionComponent<CustomCursorProps> = ({ children }) => {
   });
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
+  const cursorX = useMotionValue(0);
+  const cursorY = useMotionValue(0);
 
   const springConfig = { damping: 25, stiffness: 300 };
   const cursorXSpring = useSpring(cursorX, springConfig);
@@ -79,13 +81,14 @@ const CustomCursor: FunctionComponent<CustomCursorProps> = ({ children }) => {
           translateX: cursorXSpring,
           translateY: cursorYSpring,
         }}
-        animate={{ scale: isHovered ? 1 : 1 }}
-        transition={{ duration: 0.2 }}
-        className={styles.customCursor}
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.2, delay: 0.4 }}
+        className={styles.DynamicVideoButton}
       />
       {children}
     </div>
   );
 };
 
-export default CustomCursor;
+export default DynamicVideoButton;
