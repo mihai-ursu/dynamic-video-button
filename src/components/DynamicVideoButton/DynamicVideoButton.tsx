@@ -52,13 +52,6 @@ const DynamicVideoButton: FunctionComponent<DynamicVideoButtonProps> = ({
     setElementCenter({ x: x, y: y });
   }, []);
 
-  useEffect(() => {
-    document.addEventListener("mousemove", onMouseMove);
-    return () => {
-      document.removeEventListener("mousemove", onMouseMove);
-    };
-  });
-
   const onMouseMove = (e: MouseEvent) => {
     if (isHovered) {
       cursorX.set(e.clientX - PLAY_BUTTON_SIZE / 2);
@@ -68,6 +61,13 @@ const DynamicVideoButton: FunctionComponent<DynamicVideoButtonProps> = ({
       cursorY.set(elementCenter.y - PLAY_BUTTON_SIZE / 2);
     }
   };
+
+  useEffect(() => {
+    document.addEventListener("mousemove", onMouseMove);
+    return () => {
+      document.removeEventListener("mousemove", onMouseMove);
+    };
+  });
 
   return (
     <div
