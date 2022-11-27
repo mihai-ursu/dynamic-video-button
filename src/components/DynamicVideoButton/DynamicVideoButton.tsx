@@ -1,7 +1,6 @@
-import React, {
+import {
   FunctionComponent,
   RefObject,
-  useCallback,
   useEffect,
   useRef,
   useState,
@@ -10,24 +9,16 @@ import DynamicVideoButtonProps from "./DynamicVideoButtonProps";
 import styles from "./DynamicVideoButton.module.scss";
 import { useMotionValue, useSpring } from "framer-motion";
 import { motion } from "framer-motion";
-import useIsomorphicLayoutEffect from "hooks/useIsomorphicLayoutEffect";
 
 const DynamicVideoButton: FunctionComponent<DynamicVideoButtonProps> = ({
   children,
 }) => {
+  const PLAY_BUTTON_SIZE = 60;
   const [isHovered, setIsHovered] = useState(false);
-
-  const [dimensions, setDimensions] = useState<DOMRect | null>(null);
-  console.log(
-    "🚀 ~ file: DynamicVideoButton.tsx ~ line 25 ~ dimensions",
-    dimensions
+  const [wrapperDimensions, setWrapperDimensions] = useState<DOMRect | null>(
+    null
   );
-
-  const callBackRef = useCallback((domNode: any) => {
-    if (domNode) {
-      setDimensions(domNode.getBoundingClientRect());
-    }
-  }, []);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   const cursorX = useMotionValue(0);
   const cursorY = useMotionValue(0);
@@ -36,14 +27,35 @@ const DynamicVideoButton: FunctionComponent<DynamicVideoButtonProps> = ({
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
 
-  useEffect(() => {
-    const buttonLeft = dimensions?.left ?? 0;
-    const buttonTop = dimensions?.top ?? 0;
+  const getWrapperDimensions = (ref: RefObject<HTMLDivElement>) => {
+    if (!ref.current) return;
+    setWrapperDimensions(ref.current.getBoundingClientRect());
+  };
 
+  useEffect(() => {
+    getWrapperDimensions(wrapperRef);
+
+    document.addEventListener("scroll", () => getWrapperDimensions(wrapperRef));
+    return () => {
+      document.removeEventListener("scroll", () =>
+        getWrapperDimensions(wrapperRef)
+      );
+    };
+  }, [wrapperRef]);
+
+  useEffect(() => {
     const onMouseMove = (e: MouseEvent) => {
+      const wrapperLeft = wrapperDimensions?.left ?? 0;
+      const wrapperTop = wrapperDimensions?.top ?? 0;
+      const wrapperHeight = wrapperDimensions?.height ?? 0;
+      const wrapperWidth = wrapperDimensions?.width ?? 0;
+
+      const calcLeft = wrapperLeft + wrapperWidth / 2;
+      const calcTop = wrapperTop + wrapperHeight / 2;
+
       if (isHovered) {
-        cursorX.set(e.clientX - buttonLeft);
-        cursorY.set(e.clientY - buttonTop);
+        cursorX.set(e.clientX - calcLeft);
+        cursorY.set(e.clientY - calcTop);
       } else {
         cursorX.set(0);
         cursorY.set(0);
@@ -54,11 +66,12 @@ const DynamicVideoButton: FunctionComponent<DynamicVideoButtonProps> = ({
     return () => {
       document.removeEventListener("mousemove", onMouseMove);
     };
-  }, [isHovered, cursorX, cursorY, dimensions]);
+  }, [isHovered, wrapperDimensions, cursorX, cursorY]);
 
   return (
     <div
       className={styles.wrapper}
+      ref={wrapperRef}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -67,10 +80,6 @@ const DynamicVideoButton: FunctionComponent<DynamicVideoButtonProps> = ({
           translateX: cursorXSpring,
           translateY: cursorYSpring,
         }}
-        ref={callBackRef}
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 0.2, delay: 0.4 }}
         className={styles.customButton}
       />
       {children}
