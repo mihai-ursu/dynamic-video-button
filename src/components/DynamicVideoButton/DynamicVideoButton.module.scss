@@ -1,3 +1,5 @@
+@use "/src/styles/colors.scss" as *;
+
 .wrapper {
   position: relative;
   width: fit-content;
@@ -14,6 +16,9 @@
   height: 60px;
   z-index: 9999;
   pointer-events: none;
-  background-color: #000;
+  background-color: $color-youtube-red;
   border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

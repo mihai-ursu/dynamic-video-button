@@ -1,0 +1,7 @@
+@use "/src/styles/colors.scss" as *;
+
+.playPause {
+  fill: $color-white;
+  width: 1.5rem;
+  height: 1.5rem;
+}

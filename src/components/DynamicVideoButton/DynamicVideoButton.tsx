@@ -9,15 +9,16 @@ import DynamicVideoButtonProps from "./DynamicVideoButtonProps";
 import styles from "./DynamicVideoButton.module.scss";
 import { useMotionValue, useSpring } from "framer-motion";
 import { motion } from "framer-motion";
+import PlayPause from "./components/PlayPause/PlayPause";
 
 const DynamicVideoButton: FunctionComponent<DynamicVideoButtonProps> = ({
   children,
 }) => {
-  const PLAY_BUTTON_SIZE = 60;
   const [isHovered, setIsHovered] = useState(false);
   const [wrapperDimensions, setWrapperDimensions] = useState<DOMRect | null>(
     null
   );
+  const [isPlaying, setIsPlaying] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const cursorX = useMotionValue(0);
@@ -74,14 +75,18 @@ const DynamicVideoButton: FunctionComponent<DynamicVideoButtonProps> = ({
       ref={wrapperRef}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={() => setIsPlaying(!isPlaying)}
     >
       <motion.div
         style={{
           translateX: cursorXSpring,
           translateY: cursorYSpring,
         }}
+        animate={{ opacity: !isHovered && isPlaying ? 0 : 1 }}
         className={styles.customButton}
-      />
+      >
+        <PlayPause isPlaying={isPlaying} />
+      </motion.div>
       {children}
     </div>
   );
