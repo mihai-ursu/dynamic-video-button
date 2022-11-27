@@ -8,6 +8,7 @@ export default function Home() {
       <DynamicVideoButton>
         <div className={styles.video}></div>
       </DynamicVideoButton>
+      <div className={styles.spacer} />
     </div>
   );
 }
