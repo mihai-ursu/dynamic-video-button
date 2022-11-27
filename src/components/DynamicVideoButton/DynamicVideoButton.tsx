@@ -1,6 +1,7 @@
-import {
+import React, {
   FunctionComponent,
   RefObject,
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -9,19 +10,24 @@ import DynamicVideoButtonProps from "./DynamicVideoButtonProps";
 import styles from "./DynamicVideoButton.module.scss";
 import { useMotionValue, useSpring } from "framer-motion";
 import { motion } from "framer-motion";
+import useIsomorphicLayoutEffect from "hooks/useIsomorphicLayoutEffect";
 
 const DynamicVideoButton: FunctionComponent<DynamicVideoButtonProps> = ({
   children,
 }) => {
-  const PLAY_BUTTON_SIZE = 60;
   const [isHovered, setIsHovered] = useState(false);
-  const [buttonTopAndLeft, setButtonTopAndLeft] = useState({ top: 0, left: 0 });
+
+  const [dimensions, setDimensions] = useState<DOMRect | null>(null);
   console.log(
-    "🚀 ~ file: DynamicVideoButton.tsx ~ line 19 ~ buttonTopAndLeft",
-    buttonTopAndLeft
+    "🚀 ~ file: DynamicVideoButton.tsx ~ line 25 ~ dimensions",
+    dimensions
   );
 
-  const buttonRef = useRef<HTMLDivElement>(null);
+  const callBackRef = useCallback((domNode: any) => {
+    if (domNode) {
+      setDimensions(domNode.getBoundingClientRect());
+    }
+  }, []);
 
   const cursorX = useMotionValue(0);
   const cursorY = useMotionValue(0);
@@ -30,40 +36,25 @@ const DynamicVideoButton: FunctionComponent<DynamicVideoButtonProps> = ({
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
 
-  const setButtonTopAndLeftPosition = (ref: RefObject<HTMLDivElement>) => {
-    if (ref.current) {
-      const buttonRect = ref.current.getBoundingClientRect();
-      setButtonTopAndLeft({ top: buttonRect.top, left: buttonRect.left });
-    }
-  };
-
   useEffect(() => {
-    document.addEventListener("scroll", () =>
-      setButtonTopAndLeftPosition(buttonRef)
-    );
-    return () => {
-      document.removeEventListener("scroll", () =>
-        setButtonTopAndLeftPosition(buttonRef)
-      );
+    const buttonLeft = dimensions?.left ?? 0;
+    const buttonTop = dimensions?.top ?? 0;
+
+    const onMouseMove = (e: MouseEvent) => {
+      if (isHovered) {
+        cursorX.set(e.clientX - buttonLeft);
+        cursorY.set(e.clientY - buttonTop);
+      } else {
+        cursorX.set(0);
+        cursorY.set(0);
+      }
     };
-  }, [buttonRef]);
 
-  const onMouseMove = (e: MouseEvent) => {
-    if (isHovered) {
-      cursorX.set(e.clientX - buttonTopAndLeft.left - PLAY_BUTTON_SIZE / 2);
-      cursorY.set(e.clientY - buttonTopAndLeft.top - PLAY_BUTTON_SIZE / 2);
-    } else {
-      cursorX.set(0);
-      cursorY.set(0);
-    }
-  };
-
-  useEffect(() => {
     document.addEventListener("mousemove", onMouseMove);
     return () => {
       document.removeEventListener("mousemove", onMouseMove);
     };
-  });
+  }, [isHovered, cursorX, cursorY, dimensions]);
 
   return (
     <div
@@ -76,7 +67,7 @@ const DynamicVideoButton: FunctionComponent<DynamicVideoButtonProps> = ({
           translateX: cursorXSpring,
           translateY: cursorYSpring,
         }}
-        ref={buttonRef}
+        ref={callBackRef}
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ duration: 0.2, delay: 0.4 }}
