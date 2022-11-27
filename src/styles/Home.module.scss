@@ -1,13 +1,15 @@
 .container {
   padding: 0 2rem;
   height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .video {
   width: 800px;
   height: 450px;
   background-color: #e9e9e9;
+}
+
+.spacer {
+  height: 100vh;
+  width: 100%;
 }

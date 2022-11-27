@@ -43,8 +43,8 @@ const DynamicVideoButton: FunctionComponent<DynamicVideoButtonProps> = ({
   };
 
   useEffect(() => {
-    cursorX.set(elementCenter.x - PLAY_BUTTON_SIZE / 2);
-    cursorY.set(elementCenter.y - PLAY_BUTTON_SIZE / 2);
+    cursorX.set(0);
+    cursorY.set(0);
   }, [cursorX, cursorY, elementCenter.x, elementCenter.y]);
 
   useEffect(() => {
@@ -57,8 +57,8 @@ const DynamicVideoButton: FunctionComponent<DynamicVideoButtonProps> = ({
       cursorX.set(e.clientX - PLAY_BUTTON_SIZE / 2);
       cursorY.set(e.clientY - PLAY_BUTTON_SIZE / 2);
     } else {
-      cursorX.set(elementCenter.x - PLAY_BUTTON_SIZE / 2);
-      cursorY.set(elementCenter.y - PLAY_BUTTON_SIZE / 2);
+      cursorX.set(0);
+      cursorY.set(0);
     }
   };
 
